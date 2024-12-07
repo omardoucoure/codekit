@@ -5,11 +5,10 @@
 //  Created by Omar Doucouré on 2024-12-06.
 //
 
-
 import SwiftUI
 import Combine
 
-extension View {
+public extension View {
     /// Adds a background timer to the view, triggering the specified action after a defined duration when the app is in the background.
     /// - Parameters:
     ///   - timeInterval: The duration (in seconds) before the action is triggered while in the background.
@@ -20,14 +19,14 @@ extension View {
     }
 }
 
-private struct BackgroundTimerModifier: ViewModifier {
+public struct BackgroundTimerModifier: ViewModifier {
     @Environment(\.scenePhase) private var scenePhase
     @State private var backgroundTask: Task<Void, Never>?
 
-    let timeInterval: TimeInterval
-    let onBackgroundRefresh: @Sendable () async -> Void
+    public let timeInterval: TimeInterval
+    public let onBackgroundRefresh: @Sendable () async -> Void
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .onChange(of: scenePhase) { newPhase in
                 if newPhase == .background {
