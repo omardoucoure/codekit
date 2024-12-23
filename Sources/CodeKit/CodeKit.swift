@@ -4,6 +4,7 @@ import SwiftUI
 
 public struct NotificationViewModifier: ViewModifier {
     private let onNotification: (String) -> Void
+    @State private var showAlert = false
 
     public init(onNotification: @escaping (String) -> Void) {
         self.onNotification = onNotification
@@ -17,11 +18,17 @@ public struct NotificationViewModifier: ViewModifier {
                 let decoder = JSONDecoder()
                 do {
                     let data = try JSONSerialization.data(withJSONObject: userInfo)
-                    let payload = try decoder.decode(WonderPushNotification.self, from: data)
+                    let payload = try decoder.decode(WPNotification.self, from: data)
                     onNotification(payload.wp.targetUrl)
                 } catch {
                     print(error)
+                    showAlert = true
                 }
+            }
+            .alert("Erreur", isPresented: $showAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Impossible d'afficher la notification")
             }
     }
 }
