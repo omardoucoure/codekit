@@ -17,6 +17,10 @@ public extension View {
     func backgroundRefresh(timeInterval: TimeInterval = 300, onBackgroundRefresh: @escaping @Sendable () async -> Void) -> some View {
         modifier(BackgroundTimerModifier(timeInterval: timeInterval, onBackgroundRefresh: onBackgroundRefresh))
     }
+
+    func onNotification(perform action: @escaping (String) -> Void) -> some View {
+        modifier(NotificationViewModifier(onNotification: action))
+    }
 }
 
 public struct BackgroundTimerModifier: ViewModifier {
