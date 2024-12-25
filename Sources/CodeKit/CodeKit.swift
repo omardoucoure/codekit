@@ -19,7 +19,12 @@ public struct NotificationViewModifier: ViewModifier {
                 do {
                     let data = try JSONSerialization.data(withJSONObject: userInfo)
                     let payload = try decoder.decode(WPNotification.self, from: data)
+                    if let url = URL(string: payload.wp.targetUrl) {
+                        let lastPathComponent = url.lastPathComponent
+                        onNotification(lastPathComponent)
+                    }
                     onNotification(payload.wp.targetUrl)
+
                 } catch {
                     print(error)
                     showAlert = true
