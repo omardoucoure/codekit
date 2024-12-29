@@ -22,8 +22,9 @@ public struct NotificationViewModifier: ViewModifier {
                     if let url = URL(string: payload.wp.targetUrl) {
                         let lastPathComponent = url.lastPathComponent
                         onNotification(lastPathComponent)
+                    } else {
+                        onNotification(payload.wp.targetUrl)
                     }
-                    onNotification(payload.wp.targetUrl)
 
                 } catch {
                     print(error)
