@@ -32,7 +32,7 @@ public struct BackgroundTimerModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .onChange(of: scenePhase) { newPhase in
+            .onChange(of: scenePhase) { newPhase, oldPhase in
                 if newPhase == .background {
                     startBackgroundTimer()
                 } else if newPhase == .active {
