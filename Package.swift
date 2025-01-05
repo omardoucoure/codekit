@@ -19,11 +19,18 @@ let package = Package(
             targets: ["CodeKit"]
         ),
     ],
+    dependencies: [
+          .package(
+              url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
+              from: "10.7.0" // Use the desired version
+          ),
+      ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "CodeKit"
+            name: "CodeKit",
+            dependencies: [
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads")
+            ]
         ),
         .testTarget(
             name: "CodeKitTests",
