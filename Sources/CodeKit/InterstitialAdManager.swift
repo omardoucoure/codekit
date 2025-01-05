@@ -8,6 +8,7 @@
 import GoogleMobileAds
 import SwiftUI
 
+
 public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, ObservableObject {
     private var interstitial: GADInterstitialAd?
     private var adUnitID: String

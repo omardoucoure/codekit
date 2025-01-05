@@ -7,6 +7,7 @@
 
 import SwiftData
 
+
 public extension ModelContext {
     /// Save a generic `@Model` instance to the context.
     func save<T: AnyObject>(_ object: T) throws where T: PersistentModel {
