@@ -20,16 +20,20 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", .upToNextMajor(from: "10.0.0"))
-
+          .package(
+              url: "https://github.com/googleads/swift-package-manager-google-mobile-ads",
+              from: "11.13.0" // Use the desired version
+          ),
       ],
     targets: [
         .target(
             name: "CodeKit",
             dependencies: [
-                     "GoogleMobileAds"
-            ],
-            path: "Sources"
+                .product(
+                    name: "GoogleMobileAds",
+                    package: "swift-package-manager-google-mobile-ads"
+                )
+            ]
         ),
         .testTarget(
             name: "CodeKitTests",
