@@ -29,9 +29,14 @@ let package = Package(
         .target(
             name: "CodeKit",
             dependencies: [
-                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads")
-            ]
+                .product(
+                    name: "GoogleMobileAds",
+                    package: "swift-package-manager-google-mobile-ads"
+                )
+            ],
+            path: "Sources" // Ensure your sources are correctly defined
         ),
+        
         .testTarget(
             name: "CodeKitTests",
             dependencies: ["CodeKit"]
