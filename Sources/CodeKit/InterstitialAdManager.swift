@@ -47,3 +47,4 @@ public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, Obse
         loadAd() // Reload the ad after dismissal
     }
 }
+
