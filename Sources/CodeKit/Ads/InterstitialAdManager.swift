@@ -44,7 +44,7 @@ public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, Obse
     // MARK: - GADFullScreenContentDelegate
     public func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad dismissed.")
-        loadAd() // Reload a new ad
+       // loadAd() // Reload a new ad
         onAdDidDismiss?()
     }
 
