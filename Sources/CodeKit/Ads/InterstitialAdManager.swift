@@ -8,21 +8,19 @@
 import GoogleMobileAds
 import SwiftUI
 
-public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, ObservableObject {
+class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, ObservableObject {
     private var interstitial: GADInterstitialAd?
     private var adUnitID: String
 
-    public init(interstitial: GADInterstitialAd? = nil, adUnitID: String) {
-        self.interstitial = interstitial
+    var onAdDidDismiss: (() -> Void)?
+
+    init(adUnitID: String) {
         self.adUnitID = adUnitID
     }
 
-    public func loadAd() {
+    func loadAd() {
         let request = GADRequest()
-        GADInterstitialAd.load(
-            withAdUnitID: adUnitID,
-            request: request
-        ) { [weak self] ad, error in
+        GADInterstitialAd.load(withAdUnitID: adUnitID, request: request) { [weak self] ad, error in
             if let error = error {
                 print("Failed to load interstitial ad: \(error.localizedDescription)")
                 return
@@ -33,18 +31,25 @@ public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, Obse
         }
     }
 
-    public func showAd(from rootViewController: UIViewController) {
+    func showAd(from rootViewController: UIViewController, onAdDidDismiss: @escaping () -> Void) {
         guard let interstitial = interstitial else {
             print("Interstitial ad is not ready.")
+            onAdDidDismiss() // Proceed immediately if ad isn't ready
             return
         }
+        self.onAdDidDismiss = onAdDidDismiss
         interstitial.present(fromRootViewController: rootViewController)
     }
 
     // MARK: - GADFullScreenContentDelegate
-    public func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        print("Ad dismissed. Reloading a new ad.")
-        loadAd() // Reload the ad after dismissal
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        print("Ad dismissed.")
+        loadAd() // Reload a new ad
+        onAdDidDismiss?()
+    }
+
+    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+        print("Failed to present ad: \(error.localizedDescription)")
+        onAdDidDismiss?() // Proceed if the ad fails to present
     }
 }
-
