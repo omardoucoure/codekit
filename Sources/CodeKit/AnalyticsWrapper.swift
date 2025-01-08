@@ -14,7 +14,10 @@ import FirebaseAnalytics
 public final class AnalyticsWrapper: @unchecked Sendable {
     public static let shared = AnalyticsWrapper()
 
-    private init() {} // Private initializer to enforce singleton
+    // Debug mode, default is `false`
+    public var isDebug: Bool = false
+
+    private init() {}
 
     /// Tracks an event with optional parameters.
     /// - Parameters:
@@ -27,19 +30,21 @@ public final class AnalyticsWrapper: @unchecked Sendable {
         #endif
 
         // Debug log
-        print("Analytics Event Logged: \(name), Parameters: \(parameters)")
+        logDebug("Analytics Event Logged: \(name), Parameters: \(parameters)")
     }
 
     /// Tracks a screen view.
     /// - Parameter screenName: The name of the screen.
     public func trackScreen(_ screenName: String) {
         #if canImport(FirebaseAnalytics)
-        Analytics.setScreenName(screenName, screenClass: nil)
-        Analytics.logEvent("screen_view", parameters: ["screen_name": screenName])
+        Analytics.logEvent("screen_view", parameters: [
+            "screen_name": screenName,
+            "screen_class": "\(type(of: self))"
+        ])
         #endif
 
         // Debug log
-        print("Screen Tracked: \(screenName)")
+        logDebug("Screen Tracked: \(screenName)")
     }
 
     /// Sets a user property.
@@ -52,6 +57,13 @@ public final class AnalyticsWrapper: @unchecked Sendable {
         #endif
 
         // Debug log
-        print("User Property Set: \(property) = \(value)")
+        logDebug("User Property Set: \(property) = \(value)")
+    }
+
+    /// Logs debug information if `isDebug` is true.
+    /// - Parameter message: The debug message to print.
+    private func logDebug(_ message: String) {
+        guard isDebug else { return }
+        print(message)
     }
 }
