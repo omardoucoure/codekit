@@ -39,6 +39,7 @@ public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, Obse
         }
         self.onAdDidDismiss = onAdDidDismiss
         interstitial.present(fromRootViewController: rootViewController)
+        AnalyticsWrapper.shared.trackEvent("show_interstitial_ad")
     }
 
     // MARK: - GADFullScreenContentDelegate

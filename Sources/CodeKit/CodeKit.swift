@@ -13,11 +13,10 @@ public struct NotificationViewModifier: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .onReceive(NotificationHandler.shared.$latestNotification) { notification in
-                guard let notification else { return }
-                let userInfo = notification.notification.request.content.userInfo
+                guard let notification = notification else { return }
                 let decoder = JSONDecoder()
                 do {
-                    let data = try JSONSerialization.data(withJSONObject: userInfo)
+                    let data = try JSONSerialization.data(withJSONObject: notification)
                     let payload = try decoder.decode(WPNotification.self, from: data)
                     if let url = URL(string: payload.wp.targetUrl) {
                         let lastPathComponent = url.lastPathComponent
@@ -41,9 +40,9 @@ public struct NotificationViewModifier: ViewModifier {
 
 public class NotificationHandler: ObservableObject {
     public nonisolated(unsafe) static let shared = NotificationHandler()
-    @Published private(set) var latestNotification: UNNotificationResponse? = .none
+    @Published private(set) var latestNotification: [AnyHashable : Any]? = nil
 
-    public func handle(notification: UNNotificationResponse) {
+    public func handle(notification: [AnyHashable : Any]) {
         self.latestNotification = notification
     }
 
