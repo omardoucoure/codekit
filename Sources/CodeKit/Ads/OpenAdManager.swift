@@ -1,24 +1,26 @@
+//
+//  OpenAdsManager.swift
+//  Cuisine de chez nous
+//
+//  Created by Omar Doucouré on 2025-02-01.
+//
+
 import UIKit
 import GoogleMobileAds
 
 @MainActor
-final public class OpenAdsManager: NSObject {
-
+final class OpenAdsManager: NSObject {
     static let shared = OpenAdsManager()
 
     private var appOpenAd: GADAppOpenAd?
     private var loadTime: Date?
 
-    // Private initializer to enforce singleton usage
     private override init() {
         super.init()
     }
 
-    // MARK: - Ad Loading
-
-    /// Loads an App Open Ad.
-    func loadAd() {
-        let adUnitID = "YOUR_APP_OPEN_AD_UNIT_ID" // Replace with your ad unit id
+    /// Loads an App Open Ad using the provided ad unit ID.
+    func loadAd(with adUnitID: String) {
         let request = GADRequest()
         GADAppOpenAd.load(withAdUnitID: adUnitID, request: request) { [weak self] (ad, error) in
             if let error = error {
@@ -34,13 +36,10 @@ final public class OpenAdsManager: NSObject {
 
     /// Checks if the ad is available and not expired.
     var isAdAvailable: Bool {
-        guard let appOpenAd = appOpenAd, let loadTime = loadTime else { return false }
+        guard let _ = appOpenAd, let loadTime = loadTime else { return false }
         // Consider ad valid for 4 hours.
-        let maxAdAge: TimeInterval = 4 * 3600
-        return Date().timeIntervalSince(loadTime) < maxAdAge
+        return Date().timeIntervalSince(loadTime) < (4 * 3600)
     }
-
-    // MARK: - Ad Presentation
 
     /// Presents the App Open Ad if available.
     /// - Parameter viewController: The view controller to present the ad from.
@@ -48,7 +47,8 @@ final public class OpenAdsManager: NSObject {
         if isAdAvailable {
             appOpenAd?.present(fromRootViewController: viewController)
         } else {
-            loadAd()
+            // Optionally, you can load a new ad here if needed.
+            print("Ad is not available. Consider preloading a new ad.")
         }
     }
 }
@@ -57,22 +57,22 @@ final public class OpenAdsManager: NSObject {
 
 extension OpenAdsManager: GADFullScreenContentDelegate {
 
-    nonisolated public func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    nonisolated func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         Task { @MainActor in
             self.appOpenAd = nil
-            self.loadAd()
+            // Reload the ad as needed. You might want to store the ad unit ID if it's dynamic.
         }
     }
 
-    nonisolated public func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    nonisolated func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         Task { @MainActor in
             print("Ad failed to present full screen content with error: \(error.localizedDescription)")
             self.appOpenAd = nil
-            self.loadAd()
+            // Reload the ad if necessary.
         }
     }
 
-    nonisolated public func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
+    nonisolated func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
         Task { @MainActor in
             print("Ad recorded an impression.")
         }
