@@ -14,6 +14,7 @@ public final class OpenAdsManager: NSObject {
 
     private var appOpenAd: GADAppOpenAd?
     private var loadTime: Date?
+    private var adUnitID: String?
 
     private override init() {
         super.init()
@@ -22,6 +23,7 @@ public final class OpenAdsManager: NSObject {
     /// Loads an App Open Ad using the provided ad unit ID.
     public func loadAd(with adUnitID: String) {
         let request = GADRequest()
+        self.adUnitID = adUnitID
         GADAppOpenAd.load(withAdUnitID: adUnitID, request: request) { [weak self] (ad, error) in
             if let error = error {
                 print("Failed to load app open ad: \(error.localizedDescription)")
@@ -47,6 +49,10 @@ public final class OpenAdsManager: NSObject {
         if isAdAvailable {
             appOpenAd?.present(fromRootViewController: viewController)
         } else {
+            if let adUnitID {
+                loadAd(with: adUnitID)
+            }
+
             // Optionally, you can load a new ad here if needed.
             print("Ad is not available. Consider preloading a new ad.")
         }
