@@ -67,6 +67,9 @@ extension OpenAdsManager: GADFullScreenContentDelegate {
         Task { @MainActor in
             self.appOpenAd = nil
             // Reload the ad as needed. You might want to store the ad unit ID if it's dynamic.
+            if let adUnitID {
+                loadAd(with: adUnitID)
+            }
         }
     }
 
@@ -75,6 +78,9 @@ extension OpenAdsManager: GADFullScreenContentDelegate {
             print("Ad failed to present full screen content with error: \(error.localizedDescription)")
             self.appOpenAd = nil
             // Reload the ad if necessary.
+            if let adUnitID {
+                loadAd(with: adUnitID)
+            }
         }
     }
 
