@@ -20,7 +20,7 @@ public final class OpenAdsManager: NSObject {
     }
 
     /// Loads an App Open Ad using the provided ad unit ID.
-    func loadAd(with adUnitID: String) {
+    public func loadAd(with adUnitID: String) {
         let request = GADRequest()
         GADAppOpenAd.load(withAdUnitID: adUnitID, request: request) { [weak self] (ad, error) in
             if let error = error {
@@ -35,7 +35,7 @@ public final class OpenAdsManager: NSObject {
     }
 
     /// Checks if the ad is available and not expired.
-    var isAdAvailable: Bool {
+    public var isAdAvailable: Bool {
         guard let _ = appOpenAd, let loadTime = loadTime else { return false }
         // Consider ad valid for 4 hours.
         return Date().timeIntervalSince(loadTime) < (4 * 3600)
@@ -43,7 +43,7 @@ public final class OpenAdsManager: NSObject {
 
     /// Presents the App Open Ad if available.
     /// - Parameter viewController: The view controller to present the ad from.
-    func showAdIfAvailable(from viewController: UIViewController) {
+    public func showAdIfAvailable(from viewController: UIViewController) {
         if isAdAvailable {
             appOpenAd?.present(fromRootViewController: viewController)
         } else {
