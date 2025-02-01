@@ -9,8 +9,8 @@ import UIKit
 import GoogleMobileAds
 
 @MainActor
-final class OpenAdsManager: NSObject {
-    static let shared = OpenAdsManager()
+public final class OpenAdsManager: NSObject {
+    public static let shared = OpenAdsManager()
 
     private var appOpenAd: GADAppOpenAd?
     private var loadTime: Date?
@@ -57,14 +57,14 @@ final class OpenAdsManager: NSObject {
 
 extension OpenAdsManager: GADFullScreenContentDelegate {
 
-    nonisolated func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    public nonisolated func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         Task { @MainActor in
             self.appOpenAd = nil
             // Reload the ad as needed. You might want to store the ad unit ID if it's dynamic.
         }
     }
 
-    nonisolated func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    public nonisolated func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         Task { @MainActor in
             print("Ad failed to present full screen content with error: \(error.localizedDescription)")
             self.appOpenAd = nil
@@ -72,7 +72,7 @@ extension OpenAdsManager: GADFullScreenContentDelegate {
         }
     }
 
-    nonisolated func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
+    public nonisolated func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
         Task { @MainActor in
             print("Ad recorded an impression.")
         }
