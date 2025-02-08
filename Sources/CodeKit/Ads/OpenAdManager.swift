@@ -38,9 +38,23 @@ public final class OpenAdsManager: NSObject {
 
     /// Checks if the ad is available and not expired.
     public var isAdAvailable: Bool {
-        guard let _ = appOpenAd, let loadTime = loadTime else { return false }
-        // Consider ad valid for 4 hours.
-        return Date().timeIntervalSince(loadTime) < (4 * 3600)
+        guard let _ = appOpenAd, let loadTime = loadTime else {
+            reloadAdIfNeeded()  // Automatically reload if not available
+            return false
+        }
+
+        let isValid = Date().timeIntervalSince(loadTime) < (1 * 3600)
+        if !isValid {
+            reloadAdIfNeeded()  // Reload if expired
+        }
+
+        return isValid
+    }
+
+    private func reloadAdIfNeeded() {
+        if let adUnitID {
+            loadAd(with: adUnitID)
+        }
     }
 
     /// Presents the App Open Ad if available.
