@@ -5,7 +5,9 @@
 //  Created by Omar Doucouré on 2025-01-03.
 //
 
+#if canImport(GoogleMobileAds)
 import GoogleMobileAds
+#endif
 import SwiftUI
 
 public class InterstitialAdManager: NSObject, GADFullScreenContentDelegate, ObservableObject {

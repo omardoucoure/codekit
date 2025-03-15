@@ -6,7 +6,9 @@
 //
 
 import UIKit
+#if canImport(GoogleMobileAds)
 import GoogleMobileAds
+#endif
 
 @MainActor
 public final class OpenAdsManager: NSObject {
@@ -15,10 +17,6 @@ public final class OpenAdsManager: NSObject {
     private var appOpenAd: GADAppOpenAd?
     private var loadTime: Date?
     private var adUnitID: String?
-
-    private override init() {
-        super.init()
-    }
 
     /// Loads an App Open Ad using the provided ad unit ID.
     public func loadAd(with adUnitID: String) {
