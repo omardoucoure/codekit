@@ -15,7 +15,7 @@ public class AdManager {
 
     /// Initialize the Google Mobile Ads SDK
     public func initializeSDK(completion: (() -> Void)? = nil) {
-        GADMobileAds.sharedInstance().start { _ in
+        MobileAds.shared.start { _ in
             print("Google Mobile Ads SDK initialized successfully.")
             completion?()
         }

@@ -10,25 +10,29 @@ import GoogleMobileAds
 
 public struct AdBannerView: UIViewRepresentable {
     private let adUnitID: String
-    private let sizeBanner: GADAdSize
+    private let sizeBanner: AdSize
     @Binding private var isAdReady: Bool
 
-    public init(adUnitID: String, sizeBanner: GADAdSize = GADAdSizeMediumRectangle, isAdReady: Binding<Bool> = .constant(true)) {
+    public init(
+        adUnitID: String,
+        sizeBanner: AdSize = AdSizeMediumRectangle,
+        isAdReady: Binding<Bool> = .constant(false)
+    ) {
         self.adUnitID = adUnitID
         self.sizeBanner = sizeBanner
         self._isAdReady = isAdReady
     }
 
-    public func makeUIView(context: Context) -> GADBannerView {
-        let bannerView = GADBannerView(adSize: sizeBanner)
+    public func makeUIView(context: Context) -> BannerView {
+        let bannerView = BannerView(adSize: sizeBanner)
         bannerView.adUnitID = adUnitID
         bannerView.rootViewController = UIApplication.shared.getRootViewController()
         bannerView.delegate = context.coordinator
-        bannerView.load(GADRequest())
+        bannerView.load(Request())
         return bannerView
     }
 
-    public func updateUIView(_ uiView: GADBannerView, context: Context) {
+    public func updateUIView(_ uiView: BannerView, context: Context) {
         // No updates needed for the banner
     }
 
@@ -36,19 +40,19 @@ public struct AdBannerView: UIViewRepresentable {
         Coordinator(self)
     }
 
-    public class Coordinator: NSObject, @preconcurrency GADBannerViewDelegate {
+    public class Coordinator: NSObject, BannerViewDelegate {
         private let parent: AdBannerView
 
         init(_ parent: AdBannerView) {
             self.parent = parent
         }
 
-        @MainActor public func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        @MainActor public func bannerViewDidReceiveAd(_ bannerView: BannerView) {
             print("Ad successfully loaded.")
             parent.isAdReady = true
         }
 
-        @MainActor public func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+        @MainActor public func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
             print("Failed to load ad: \(error.localizedDescription)")
             parent.isAdReady = false
         }

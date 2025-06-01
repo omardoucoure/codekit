@@ -14,15 +14,15 @@ import GoogleMobileAds
 public final class OpenAdsManager: NSObject {
     public static let shared = OpenAdsManager()
 
-    private var appOpenAd: GADAppOpenAd?
+    private var appOpenAd: AppOpenAd?
     private var loadTime: Date?
     private var adUnitID: String?
 
     /// Loads an App Open Ad using the provided ad unit ID.
     public func loadAd(with adUnitID: String) {
-        let request = GADRequest()
+        let request = Request()
         self.adUnitID = adUnitID
-        GADAppOpenAd.load(withAdUnitID: adUnitID, request: request) { [weak self] (ad, error) in
+        AppOpenAd.load(with: adUnitID, request: request) { [weak self] (ad, error) in
             if let error = error {
                 print("Failed to load app open ad: \(error.localizedDescription)")
                 return
@@ -59,7 +59,7 @@ public final class OpenAdsManager: NSObject {
     /// - Parameter viewController: The view controller to present the ad from.
     public func showAdIfAvailable(from viewController: UIViewController) {
         if isAdAvailable {
-            appOpenAd?.present(fromRootViewController: viewController)
+            appOpenAd?.present(from: viewController)
         } else {
             if let adUnitID {
                 loadAd(with: adUnitID)
@@ -73,9 +73,9 @@ public final class OpenAdsManager: NSObject {
 
 // MARK: - GADFullScreenContentDelegate
 
-extension OpenAdsManager: GADFullScreenContentDelegate {
+extension OpenAdsManager: FullScreenContentDelegate {
 
-    public nonisolated func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    public nonisolated func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         Task { @MainActor in
             self.appOpenAd = nil
             // Reload the ad as needed. You might want to store the ad unit ID if it's dynamic.
@@ -85,7 +85,7 @@ extension OpenAdsManager: GADFullScreenContentDelegate {
         }
     }
 
-    public nonisolated func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    public nonisolated func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         Task { @MainActor in
             print("Ad failed to present full screen content with error: \(error.localizedDescription)")
             self.appOpenAd = nil
@@ -96,7 +96,7 @@ extension OpenAdsManager: GADFullScreenContentDelegate {
         }
     }
 
-    public nonisolated func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
+    public nonisolated func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
         Task { @MainActor in
             print("Ad recorded an impression.")
         }
